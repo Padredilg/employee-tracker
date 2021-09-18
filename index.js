@@ -84,7 +84,7 @@ const viewEmployees = () =>{
 }
 
 const viewEmployeesByManager = () => {
-    const sql = `SELECT emp.id as emp_id,
+    const sql = `SELECT emp.id AS emp_id,
     emp.first_name AS emp_firstname,
     emp.last_name AS emp_lastname,
     manager.first_name AS manager_firstname,
@@ -101,8 +101,20 @@ const viewEmployeesByManager = () => {
 }
 
 const viewEmployeesByDept = () => {
-    console.log('view employees by Dept');
-    action();
+    const sql = `SELECT employee.id AS emp_id,
+    employee.first_name AS emp_firstname,
+    employee.last_name AS emp_lastname,
+    department.name AS department,
+    FROM employee
+    JOIN role ON employee.role_id = role.id
+    JOIN department ON role.department_id = department.id
+    ORDER BY department.name DESC`;
+
+
+    db.query(sql, function(err, data){
+        console.table(data);
+        action();
+    })
 }
 
 const addDepartment = () =>{

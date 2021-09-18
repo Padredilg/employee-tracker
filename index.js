@@ -21,26 +21,26 @@ const action = () =>{
     )
     .then(decision => {
         //check what decision is and act accordingly
-        if(decision === 'view all departments'){
+        if(decision.action === 'view all departments'){
             viewDepartments();
         }
-        else if(decision === 'view all roles'){
+        else if(decision.action === 'view all roles'){
             viewRoles();
         }
-        else if(decision === 'view all employees'){
+        else if(decision.action === 'view all employees'){
             viewEmployees();
         }
-        else if(decision === 'add a department'){
+        else if(decision.action === 'add a department'){
             addDepartment();
         }
-        else if(decision === 'add a role'){
+        else if(decision.action === 'add a role'){
             addRole();
         }
-        else if(decision === 'add an employee'){
+        else if(decision.action === 'add an employee'){
             addEmployee();
         }
         
-        else if(decision === 'update an employee role'){
+        else if(decision.action === 'update an employee role'){
             updateEmployee();
         }
         else{

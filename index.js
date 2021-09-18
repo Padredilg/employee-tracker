@@ -15,7 +15,8 @@ const action = () =>{
                 'Add a department',
                 'Add a role',
                 'Add an employee',
-                'Update an employee role',
+                "Update an employee's role",
+                "Update an employee's manager",
                 'Exit'
             ]
         }
@@ -41,8 +42,11 @@ const action = () =>{
             addEmployee();
         }
         
-        else if(decision.action === 'Update an employee role'){
-            updateEmployee();
+        else if(decision.action === "Update an employee's role"){
+            updateEmployeeRole();
+        }
+        else if(decision.action === "Update an employee's manager"){
+            updateEmployeeManager();
         }
         else{
             exit();
@@ -220,7 +224,7 @@ const addEmployee = () =>{
     })
 }
 
-const updateEmployee = () =>{
+const updateEmployeeRole = () =>{
     //select an emloyee and their new role, then update that info in database
     db.query('SELECT * FROM role', function(err, roleData){
         db.query('SELECT * FROM employee', function(err, employeeData){
@@ -258,6 +262,50 @@ const updateEmployee = () =>{
                 })
             })
         })
+    })
+}
+
+const updateEmployeeManager = () =>{
+    db.query('SELECT * FROM employee', function(err, employeeData){            
+        const employeeNames = employeeData.map(employee => {
+            return { 
+                name: employee.first_name + ' ' + employee.last_name,
+                value: employee.id
+            }
+        });
+
+        employeeNames.push({
+            name: 'no manager',
+            value: null
+        });
+
+        inquirer.prompt([
+            {//employee
+                type: 'list',
+                name: 'employee',
+                message:"select employee to be updated:",
+                choices: employeeNames
+            },
+            {//newRole
+                type: 'list',
+                name: 'newManager',
+                message:"Assign employee a new manager",
+                choices: employeeNames
+            },
+        ]).then(response => {
+            //if manager is the same person notify mistake and call updateManager again
+            if(response.employee === response.newManager){
+                console.log("You cannot select an employee to be his own manager!");
+                console.log("Try again");
+                return updateEmployeeManager();
+            }
+
+            db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [response.newManager, response.employee] , function(err, data){
+                console.log('Employee succesfully updated in the database');
+                action();
+            })
+        })
+        
     })
 }
 

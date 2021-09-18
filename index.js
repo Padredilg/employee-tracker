@@ -104,7 +104,7 @@ const viewEmployeesByDept = () => {
     const sql = `SELECT employee.id AS emp_id,
     employee.first_name AS emp_firstname,
     employee.last_name AS emp_lastname,
-    department.name AS department,
+    department.name AS department
     FROM employee
     JOIN role ON employee.role_id = role.id
     JOIN department ON role.department_id = department.id
@@ -112,6 +112,9 @@ const viewEmployeesByDept = () => {
 
 
     db.query(sql, function(err, data){
+        if(err){
+            console.log(err);
+        }
         console.table(data);
         action();
     })

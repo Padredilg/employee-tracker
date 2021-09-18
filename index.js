@@ -12,13 +12,13 @@ const action = () =>{
                 'View all departments',
                 'View all roles',
                 'View all employees',
+                'View employees by manager',
+                'View employees by department',
                 'Add a department',
                 'Add a role',
                 'Add an employee',
                 "Update an employee's role",
                 "Update an employee's manager",
-                'View employees by manager',
-                'View employees by department',
                 'Exit'
             ]
         }
@@ -55,6 +55,15 @@ const action = () =>{
         }
         else if(decision.action === "Update an employee's manager"){
             updateEmployeeManager();
+        }
+        else if(decision.action === "delete a department"){
+            deleteDepartment();
+        }
+        else if(decision.action === "delete a role"){
+            deleteRole();
+        }
+        else if(decision.action === "delete an employee"){
+            deleteEmployee();
         }
         else{
             exit();
@@ -350,6 +359,21 @@ const updateEmployeeManager = () =>{
             })
         })
     })
+}
+
+const deleteDepartment = () =>{
+    console.log('Delete a department');
+    action();
+}
+
+const deleteRole = () =>{
+    console.log('Delete a Role');
+    action();
+}
+
+const deleteEmployee = () =>{
+    console.log('Delete a Employee');
+    action();
 }
 
 const exit = () =>{

@@ -17,6 +17,8 @@ const action = () =>{
                 'Add an employee',
                 "Update an employee's role",
                 "Update an employee's manager",
+                'View employees by manager',
+                'View employees by department',
                 'Exit'
             ]
         }
@@ -31,6 +33,12 @@ const action = () =>{
         }
         else if(decision.action === 'View all employees'){
             viewEmployees();
+        }
+        else if(decision.action === 'View employees by manager'){
+            viewEmployeesByManager();
+        }
+        else if(decision.action === 'View employees by department'){
+            viewEmployeesByDept();
         }
         else if(decision.action === 'Add a department'){
             addDepartment();
@@ -73,6 +81,23 @@ const viewEmployees = () =>{
         console.table(data);
         action();
     })
+}
+
+const viewEmployeesByManager = () => {
+    const sql = `SELECT employee, employee
+    FROM employee
+    LEFT JOIN employee ON employee.manager_id = employee.id`;
+
+
+    db.query(sql, function(err, data){
+        console.table(data);
+        action();
+    })
+}
+
+const viewEmployeesByDept = () => {
+    console.log('view employees by Dept');
+    action();
 }
 
 const addDepartment = () =>{
@@ -273,7 +298,6 @@ const updateEmployeeManager = () =>{
                 value: employee.id
             }
         });
-
         employeeNames.push({
             name: 'no manager',
             value: null
@@ -305,7 +329,6 @@ const updateEmployeeManager = () =>{
                 action();
             })
         })
-        
     })
 }
 

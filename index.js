@@ -51,7 +51,6 @@ const action = () =>{
 }
 
 const viewDepartments = () =>{
-    
     db.query('SELECT * FROM department', function(err, data){
         console.table(data);
         action();
@@ -59,7 +58,6 @@ const viewDepartments = () =>{
 }
 
 const viewRoles = () =>{
-    
     db.query('SELECT * FROM role', function(err, data){
         console.table(data);
         action();
@@ -71,8 +69,6 @@ const viewEmployees = () =>{
         console.table(data);
         action();
     })
-    
-    action();
 }
 
 const addDepartment = () =>{
@@ -129,14 +125,17 @@ const addRole = () =>{
 
 const addEmployee = () =>{
     db.query('SELECT * FROM role', function(err, roleData){
-        const roleNames = roleData.map(role => {
-            return { 
-                name: role.title,
-                value: role.id
-            }
-        });
-
+        //roleData now contains rows from role table
         db.query('SELECT * FROM employee', function(err, employeeData){
+            //employeeData now contains all rows from employee table
+            
+            const roleNames = roleData.map(role => {
+                return { 
+                    name: role.title,
+                    value: role.id
+                }
+            });
+
             const employeeNames = employeeData.map(employee => {
                 return { 
                     name: employee.first_name + ' ' + employee.last_name,
@@ -222,16 +221,50 @@ const addEmployee = () =>{
 }
 
 const updateEmployee = () =>{
-    console.log('update Employee')
-    
-    action();
+    //select an emloyee and their new role, then update that info in database
+    db.query('SELECT * FROM role', function(err, roleData){
+        db.query('SELECT * FROM employee', function(err, employeeData){
+            
+            const roleNames = roleData.map(role => {
+                return { 
+                    name: role.title,
+                    value: role.id
+                }
+            });
+            const employeeNames = employeeData.map(employee => {
+                return { 
+                    name: employee.first_name + ' ' + employee.last_name,
+                    value: employee.id
+                }
+            });
+
+            inquirer.prompt([
+                {//employee
+                    type: 'list',
+                    name: 'employee',
+                    message:"select employee to be updated:",
+                    choices: employeeNames
+                },
+                {//newRole
+                    type: 'list',
+                    name: 'newRole',
+                    message:"select employee's new role:",
+                    choices: roleNames
+                },
+            ]).then(response => {
+                db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [response.newRole, response.employee] , function(err, data){
+                    console.log('Employee succesfully updated in the database');
+                    action();
+                })
+            })
+        })
+    })
 }
 
 const exit = () =>{
     console.log('Thank you for your time!');
     process.exit(0);//exit(0) means successful stop
 }
-
 
 
 db.connect(err => {

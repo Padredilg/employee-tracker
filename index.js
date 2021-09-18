@@ -84,9 +84,14 @@ const viewEmployees = () =>{
 }
 
 const viewEmployeesByManager = () => {
-    const sql = `SELECT employee, employee
-    FROM employee
-    LEFT JOIN employee ON employee.manager_id = employee.id`;
+    const sql = `SELECT emp.id as emp_id,
+    emp.first_name AS emp_firstname,
+    emp.last_name AS emp_lastname,
+    manager.first_name AS manager_firstname,
+    manager.last_name AS manager_lastname
+    FROM employee emp
+    LEFT JOIN employee manager ON emp.manager_id = manager.id
+    ORDER BY manager.id DESC`;
 
 
     db.query(sql, function(err, data){

@@ -89,27 +89,6 @@ const addDepartment = () =>{
         })
     })
 }
-// [
-//     {
-//         id:1,
-//         name:"saless"
-//     },
-//     {
-//         id:2,
-//         name:"financial"
-//     },
-// ]
-
-// [
-//     {
-//         name:sales,
-//         value:1
-//     },
-//     {
-//         name:"financial",
-//         value:2
-//     },
-// ]
 
 const addRole = () =>{
     
@@ -118,7 +97,7 @@ const addRole = () =>{
             return { 
                 name: dept.name,
                 value: dept.id
-             }
+            }
         })
 
         inquirer.prompt([
@@ -150,9 +129,101 @@ const addRole = () =>{
 }
 
 const addEmployee = () =>{
-    console.log('add Employee')
+    db.query('SELECT * FROM role', function(err, roleData){
+        const roleNames = roleData.map(role => {
+            return { 
+                name: role.title,
+                value: role.id
+            }
+        });
+
+        const employeeNames = '';
+        const getEmployeeNames = () => {
+            db.query('SELECT * FROM employee', function(err, employeeData){
+                employeeNames = employeeData.map(employee => {
+                    return { 
+                        name: employee.first_name + employee.last_name,
+                        value: employee.id
+                    }
+                })
+            })
+        }
+        getEmployeeNames();
     
-    action();
+        inquirer.prompt([
+            {//first name
+                type: 'input',
+                name: 'first_name',
+                message:"Enter new employee's first name:"
+            },
+            {//last name
+                type: 'input',
+                name: 'last_name',
+                message:"Enter new employee's last name:"
+            },
+            {//role
+                type: 'list',
+                name: 'role',
+                message:"Enter new employee's role:",
+                choices: roleNames
+            },
+            {//confirmManager
+                type: 'confirm',
+                name: 'confirmManager',
+                message: 'Will this employee have a manager?',
+                default: true
+            },
+            {//chooseManager when confirmManager (list or input)
+                type: 'list',
+                name: 'chooseManager',
+                message: "Would you like to choose the manager from list or input the manager's ID?",
+                choices: [
+                    'Select manager from list',
+                    'Enter manager ID'
+                ],
+                when: ({confirmManager}) => {
+                    if(confirmManager){
+                        return true;//means ask this question
+                    }
+                    else{
+                        return false;//means dont ask this question
+                    }
+                } 
+            },
+            {//managerId as list when chooseManager == 'Select manager from list'
+                type: 'list',
+                name: 'managerId',
+                message: "Please select the employee's manager:",
+                choices: employeeNames,
+                when: ({chooseManager}) => {
+                    if(chooseManager == 'Select manager from list'){
+                        return true;//means ask this question
+                    }
+                    else{
+                        return false;//means dont ask this question
+                    }
+                }                
+            },
+            {//managerId as input when chooseManager == 'Enter manager ID'
+                type: 'input',
+                name: 'managerId',
+                message: "Please enter the ID of this employee's manager:",
+                when: ({chooseManager}) => {
+                    if(chooseManager == 'Enter manager ID'){
+                        return true;//means ask this question
+                    }
+                    else{
+                        return false;//means dont ask this question
+                    }
+                }                
+            }
+        ]).then((response) => {
+            db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)',[response.first_name, response.last_name, response.role, response.managerId], function(err, data){
+                console.log(response.first_name, response.last_name, 'has been successfuly added to the employee table.')
+                action();
+            })
+        })
+    })
 }
 
 const updateEmployee = () =>{

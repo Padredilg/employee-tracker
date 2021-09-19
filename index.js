@@ -19,6 +19,9 @@ const action = () =>{
                 'Add an employee',
                 "Update an employee's role",
                 "Update an employee's manager",
+                "delete a department",
+                "delete a role",
+                "delete an employee",
                 'Exit'
             ]
         }
@@ -362,8 +365,29 @@ const updateEmployeeManager = () =>{
 }
 
 const deleteDepartment = () =>{
-    console.log('Delete a department');
-    action();
+    db.query('SELECT * FROM department', function(err, deptData){
+            
+        const deptNames = deptData.map(dept => {
+            return { 
+                name: dept.name,
+                value: dept.id
+            }
+        });
+
+        inquirer.prompt(
+            {//employee
+                type: 'list',
+                name: 'department',
+                message:"which department would you like to remove?",
+                choices: deptNames
+            }
+        ).then(response => {
+            db.query(`DELETE FROM department WHERE id = ?`, response.department , function(err, data){
+                console.log('the department was successfully deleted from the database!');
+                action();
+            })
+        })
+    })
 }
 
 const deleteRole = () =>{

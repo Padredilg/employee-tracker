@@ -14,6 +14,7 @@ const action = () =>{
                 'View all employees',
                 'View employees by manager',
                 'View employees by department',
+                "view total budget of a department",
                 'Add a department',
                 'Add a role',
                 'Add an employee',
@@ -43,6 +44,9 @@ const action = () =>{
         else if(decision.action === 'View employees by department'){
             viewEmployeesByDept();
         }
+        else if(decision.action === "View total budget of a department"){
+            viewDeptBudget();
+        }
         else if(decision.action === 'Add a department'){
             addDepartment();
         }
@@ -59,13 +63,13 @@ const action = () =>{
         else if(decision.action === "Update an employee's manager"){
             updateEmployeeManager();
         }
-        else if(decision.action === "delete a department"){
+        else if(decision.action === "Delete a department"){
             deleteDepartment();
         }
-        else if(decision.action === "delete a role"){
+        else if(decision.action === "Delete a role"){
             deleteRole();
         }
-        else if(decision.action === "delete an employee"){
+        else if(decision.action === "Delete an employee"){
             deleteEmployee();
         }
         else{
@@ -130,6 +134,11 @@ const viewEmployeesByDept = () => {
         console.table(data);
         action();
     })
+}
+
+const viewDeptBudget = () =>{
+    console.log('view total budget of department A');
+    action();
 }
 
 const addDepartment = () =>{

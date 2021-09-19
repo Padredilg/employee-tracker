@@ -162,7 +162,7 @@ const addDepartment = () =>{
         }
     ).then((response) => {
         db.query('INSERT INTO department (name) VALUES (?)',response.dept, function(err, data){
-            console.table(data);
+            console.log(response.dept, ' has been successfully added to database')
             action();
         })
     })
@@ -186,7 +186,16 @@ const addRole = () =>{
             {
                 type: 'input',
                 name: 'salary',
-                message:"Enter new role's salary:"
+                message:"Enter new role's salary:",
+                validate: salaryInput => {
+                    if(isNaN(salaryInput)){
+                      console.log(' - Please enter salary using numbers only!');
+                      return false;
+                    }
+                    else{
+                      return true;
+                    }
+                }
             },
             {
                 type: 'list',

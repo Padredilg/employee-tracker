@@ -14,15 +14,15 @@ const action = () =>{
                 'View all employees',
                 'View employees by manager',
                 'View employees by department',
-                "view total budget of a department",
+                "View total budget of a department",
                 'Add a department',
                 'Add a role',
                 'Add an employee',
                 "Update an employee's role",
                 "Update an employee's manager",
-                "delete a department",
-                "delete a role",
-                "delete an employee",
+                "Delete a department",
+                "Delete a role",
+                "Delete an employee",
                 'Exit'
             ]
         }
@@ -56,7 +56,6 @@ const action = () =>{
         else if(decision.action === 'Add an employee'){
             addEmployee();
         }
-        
         else if(decision.action === "Update an employee's role"){
             updateEmployeeRole();
         }
@@ -100,11 +99,11 @@ const viewEmployees = () =>{
 }
 
 const viewEmployeesByManager = () => {
-    const sql = `SELECT emp.id AS emp_id,
-    emp.first_name AS emp_firstname,
-    emp.last_name AS emp_lastname,
-    manager.first_name AS manager_firstname,
-    manager.last_name AS manager_lastname
+    const sql = `SELECT emp.id AS Emp_id,
+    emp.first_name AS Emp_firstname,
+    emp.last_name AS Emp_lastname,
+    manager.first_name AS Manager_firstname,
+    manager.last_name AS Manager_lastname
     FROM employee emp
     LEFT JOIN employee manager ON emp.manager_id = manager.id
     ORDER BY manager.id DESC`;
@@ -117,10 +116,10 @@ const viewEmployeesByManager = () => {
 }
 
 const viewEmployeesByDept = () => {
-    const sql = `SELECT employee.id AS emp_id,
-    employee.first_name AS emp_firstname,
-    employee.last_name AS emp_lastname,
-    department.name AS department
+    const sql = `SELECT employee.id AS Emp_id,
+    employee.first_name AS Emp_firstname,
+    employee.last_name AS Emp_lastname,
+    department.name AS Department
     FROM employee
     JOIN role ON employee.role_id = role.id
     JOIN department ON role.department_id = department.id
@@ -137,8 +136,21 @@ const viewEmployeesByDept = () => {
 }
 
 const viewDeptBudget = () =>{
-    console.log('view total budget of department A');
-    action();
+    const sql = `SELECT department.name AS Department, 
+    SUM(role.salary) AS Total_Budget
+    FROM employee
+    JOIN role ON employee.role_id = role.id
+    JOIN department ON role.department_id = department.id
+    GROUP BY department.name`;
+
+
+    db.query(sql, function(err, data){
+        if(err){
+            console.log(err);
+        }
+        console.table(data);
+        action();
+    })
 }
 
 const addDepartment = () =>{
@@ -146,7 +158,7 @@ const addDepartment = () =>{
         {
             type: 'input',
             name: 'dept',
-            message:'Type the name of the new department'
+            message:"Enter new department's name:"
         }
     ).then((response) => {
         db.query('INSERT INTO department (name) VALUES (?)',response.dept, function(err, data){
@@ -169,12 +181,12 @@ const addRole = () =>{
             {
                 type: 'input',
                 name: 'title',
-                message:'Type the title of the new role'
+                message:"Enter new role's title:"
             },
             {
                 type: 'input',
                 name: 'salary',
-                message:'Type the salary of the new role'
+                message:"Enter new role's salary:"
             },
             {
                 type: 'list',
@@ -184,13 +196,11 @@ const addRole = () =>{
             }
         ]).then((response) => {
             db.query('INSERT INTO role (title, salary, department_id) VALUES (?,?,?)',[response.title, response.salary, response.deptid], function(err, data){
-                console.log(response.title, 'has been added')
+                console.log(response.title, 'role has been successfully added to database')
                 action();
             })
         })
-    })
-
-    
+    })   
 }
 
 const addEmployee = () =>{
@@ -282,7 +292,7 @@ const addEmployee = () =>{
                 }
             ]).then((response) => {
                 db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)',[response.first_name, response.last_name, response.role, response.managerId], function(err, data){
-                    console.log(response.first_name, response.last_name, 'has been successfuly added to the employee table.')
+                    console.log(response.first_name, response.last_name, 'has been successfuly added to the database')
                     action();
                 })
             })
@@ -312,18 +322,18 @@ const updateEmployeeRole = () =>{
                 {//employee
                     type: 'list',
                     name: 'employee',
-                    message:"select employee to be updated:",
+                    message:"Select employee to be updated:",
                     choices: employeeNames
                 },
                 {//newRole
                     type: 'list',
                     name: 'newRole',
-                    message:"select employee's new role:",
+                    message:"Select employee's new role:",
                     choices: roleNames
                 },
             ]).then(response => {
                 db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [response.newRole, response.employee] , function(err, data){
-                    console.log('Employee succesfully updated in the database');
+                    console.log('Employee was successfully updated in the database');
                     action();
                 })
             })
@@ -339,8 +349,13 @@ const updateEmployeeManager = () =>{
                 value: employee.id
             }
         });
-        employeeNames.push({
-            name: 'no manager',
+
+        const employeeNames2 = [];
+        for(let i=0; i<employeeNames.length; i++){
+            employeeNames2.push(employeeNames[i]);
+        }
+        employeeNames2.push({
+            name: 'No manager',
             value: null
         });
 
@@ -348,14 +363,14 @@ const updateEmployeeManager = () =>{
             {//employee
                 type: 'list',
                 name: 'employee',
-                message:"select employee to be updated:",
+                message:"Select employee to be updated:",
                 choices: employeeNames
             },
             {//newRole
                 type: 'list',
                 name: 'newManager',
-                message:"Assign employee a new manager",
-                choices: employeeNames
+                message:"Assign this employee a new manager:",
+                choices: employeeNames2
             },
         ]).then(response => {
             //if manager is the same person notify mistake and call updateManager again
@@ -366,7 +381,7 @@ const updateEmployeeManager = () =>{
             }
 
             db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [response.newManager, response.employee] , function(err, data){
-                console.log('Employee succesfully updated in the database');
+                console.log('Employee successfully updated in the database');
                 action();
             })
         })
@@ -387,12 +402,12 @@ const deleteDepartment = () =>{
             {
                 type: 'list',
                 name: 'department',
-                message:"which department would you like to remove?",
+                message:"Which department would you like to remove?",
                 choices: deptNames
             }
         ).then(response => {
             db.query(`DELETE FROM department WHERE id = ?`, response.department , function(err, data){
-                console.log('the department was successfully deleted from the database!');
+                console.log('The department was successfully deleted from the database');
                 action();
             })
         })
@@ -413,12 +428,12 @@ const deleteRole = () =>{
             {
                 type: 'list',
                 name: 'role',
-                message:"which role would you like to remove?",
+                message:"Which role would you like to remove?",
                 choices: roleNames
             }
         ).then(response => {
             db.query(`DELETE FROM role WHERE id = ?`, response.role , function(err, data){
-                console.log('the role was successfully deleted from the database!');
+                console.log('The role was successfully deleted from the database');
                 action();
             })
         })
@@ -439,12 +454,12 @@ const deleteEmployee = () =>{
             {
                 type: 'list',
                 name: 'employee',
-                message:"which employee would you like to remove?",
+                message:"Which employee would you like to remove?",
                 choices: employeeNames
             }
         ).then(response => {
             db.query(`DELETE FROM employee WHERE id = ?`, response.employee , function(err, data){
-                console.log('the employee was successfully deleted from the database!');
+                console.log('The employee was successfully deleted from the database!');
                 action();
             })
         })

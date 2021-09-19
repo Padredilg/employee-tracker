@@ -18,10 +18,11 @@ To run this app for the first time, the user must clone it to their local repo a
 - npm install inquirer 
 - npm install dotenv
 - npm install --save mysql2
+- </br>
 You will need MySQL installed in your local machine, as well as a personal MySQL account. After installing all required packages, make sure to create a .env file, add the following variables to it and include your password on DB_PASS:
 - DB_NAME='localhost'
 - DB_USER='root'
-- DB_PASS='--your password--'
+- DB_PASS='*your password*'
 </br>
 You will then be ready to go.
 
@@ -44,8 +45,11 @@ Before anything you want to make sure that you are using the correct database. I
 - Exit
  </br>
  You may end the application by choosing Exit from the list of actions, or by pressing CTRL + C.
-
- Include Video
+ </br></br>
+ _Walkthrough video of the app_:
+ </br>
+ 
+https://user-images.githubusercontent.com/85601336/133915274-c039ca24-0dcd-4cfc-b9fb-59b413527d4e.mp4
 
 ## License
 This application is covered under the <a href='https://opensource.org/licenses/MIT'>MIT License</a>

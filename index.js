@@ -375,7 +375,7 @@ const deleteDepartment = () =>{
         });
 
         inquirer.prompt(
-            {//employee
+            {
                 type: 'list',
                 name: 'department',
                 message:"which department would you like to remove?",
@@ -391,8 +391,29 @@ const deleteDepartment = () =>{
 }
 
 const deleteRole = () =>{
-    console.log('Delete a Role');
-    action();
+    db.query('SELECT * FROM role', function(err, roleData){
+            
+        const roleNames = roleData.map(role => {
+            return { 
+                name: role.title,
+                value: role.id
+            }
+        });
+
+        inquirer.prompt(
+            {
+                type: 'list',
+                name: 'role',
+                message:"which role would you like to remove?",
+                choices: roleNames
+            }
+        ).then(response => {
+            db.query(`DELETE FROM role WHERE id = ?`, response.role , function(err, data){
+                console.log('the role was successfully deleted from the database!');
+                action();
+            })
+        })
+    })
 }
 
 const deleteEmployee = () =>{

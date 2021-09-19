@@ -19,11 +19,12 @@ To run this app for the first time, the user must clone it to their local repo a
 - npm install dotenv
 - npm install --save mysql2
 </br>
-You will need MySQL installed in your local machine, as well as a personal MySQL account. After installing all required packages, make sure to create a .env file, add the following variables to it and include your password on DB_PASS:
+You will need MySQL installed in your local machine, as well as a personal MySQL account. After installing all required packages, make sure to create a .env file, add the following variables to it and include your password on DB_PASS:</br></br>
+
 - DB_NAME='localhost'
 - DB_USER='root'
 - DB_PASS='*your password*'
-</br>
+
 You will then be ready to go.
 
 ## Usage

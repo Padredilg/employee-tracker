@@ -46,7 +46,7 @@ Before anything you want to make sure that you are using the correct database. I
  </br>
  You may end the application by choosing Exit from the list of actions, or by pressing CTRL + C.
  </br></br>
- _Walkthrough video of the app_:
+ Walkthrough video of the app:
  </br>
  
 https://user-images.githubusercontent.com/85601336/133915274-c039ca24-0dcd-4cfc-b9fb-59b413527d4e.mp4

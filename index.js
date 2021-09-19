@@ -417,8 +417,29 @@ const deleteRole = () =>{
 }
 
 const deleteEmployee = () =>{
-    console.log('Delete a Employee');
-    action();
+    db.query('SELECT * FROM employee', function(err, employeeData){
+            
+        const employeeNames = employeeData.map(employee => {
+            return { 
+                name: employee.first_name + ' ' + employee.last_name,
+                value: employee.id
+            }
+        });
+
+        inquirer.prompt(
+            {
+                type: 'list',
+                name: 'employee',
+                message:"which employee would you like to remove?",
+                choices: employeeNames
+            }
+        ).then(response => {
+            db.query(`DELETE FROM employee WHERE id = ?`, response.employee , function(err, data){
+                console.log('the employee was successfully deleted from the database!');
+                action();
+            })
+        })
+    })
 }
 
 const exit = () =>{
